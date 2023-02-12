@@ -1,0 +1,57 @@
+openapi: 3.0.0
+info:
+  title: ecomm-app 
+  description: Testing the ecomm-app apis
+  version: 1.0.0
+  contact:
+    email: pruthvirajjadhav1@gmail.com
+
+# servers:
+#   - url: "http://localhost:8000/api/v1"
+#     description: For localhost - regular
+#   - url: "https://localhost:8000/api/v1"
+#     description: For localhost - secure
+
+servers:
+  - url: "{protocol}://localhost:8000/api/{version}"
+    description: For localhost
+    variables:
+      version:
+        enum:
+          - v1
+          - v2
+        default: v1
+      protocol:
+        enum:
+          - http
+          - https
+        default: http
+
+components:
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: token
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+paths:
+  /dummy:
+    get:
+      tags:
+        - String
+      summary: returns a shit string
+      responses:
+        200:
+          description: All good
+          content:
+            application/json:
+              schema:
+                type: string
+                example: "mystring"
+        400:
+          description: Bad request
+        500:
+          description: Internal server error
