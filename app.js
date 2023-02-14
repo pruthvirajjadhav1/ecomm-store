@@ -23,9 +23,11 @@ app.use(fileUpload());
 
 // import all routes here
 const home = require('./routes/home');
+const user = require('./routes/user');
 
 // routes middleware
 app.use("/api/v1",home);
+app.use("/api/v1",user);
 
 // THIS EXPORTS THE APP
 module.exports = app;
