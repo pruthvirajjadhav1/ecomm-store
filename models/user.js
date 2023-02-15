@@ -32,11 +32,9 @@ const userSchema = new mongoose.Schema({
 	photo: {
 		id: {
 			type: String,
-			required: true
 		},
 		secure_url: {
 			type: String,
-			required: true
 		},
 	},
 	forgotPasswordToken: String,
@@ -51,7 +49,7 @@ const userSchema = new mongoose.Schema({
 
 // ecrypt password before save - HOOKS
 // The `userSchema.pre` method is a Mongoose middleware that allows you to run some code before an event occurs on a Mongoose model.
-userSchema.pre("save", async (next)=>{
+userSchema.pre("save", async function(next){
 	if(!this.isModified("password")){
 		return next();
 	}
