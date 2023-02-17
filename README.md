@@ -1,0 +1,3 @@
+# ecomm-store
+
+its still work in progress. Will upload a proper readme soon....
