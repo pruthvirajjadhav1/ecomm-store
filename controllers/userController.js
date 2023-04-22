@@ -121,4 +121,32 @@ exports.passwordReset = BigPromise(async (req, res, next) => {
   const { token } = req.params;
 
   const encryToken = crypto.createHash('sha256').update(token).digest('hex');
+
+  const user = await User.find({
+    encryToken,
+    forgotPasswordExpiry: { $gt: Date.now() }, // Here the date of the token should be grater than what is stored or token will expire
+  });
+
+  if (!user) {
+    return next(new Error('Token is invalid or expired', 400));
+  }
+
+  if (req.body.password != req.body.confPassword) {
+    return next(new Error('Confirm password does not match'));
+  }
+
+  user.password = req.body.password;
+
+  user.forgotPasswordExpiry = undefined;
+  user.forgotPasswordToken = undefined;
+  await user.save();
+});
+
+exports.getLoggedInUserDetails = BigPromise(async (req, res, next) => {
+  const user = await User.findById(req.user.id);
+
+  res.status(200).json({
+    success: true,
+    user,
+  });
 });
