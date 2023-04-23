@@ -1,4 +1,4 @@
-const bigPromise = require('..middlewares/bigPromise');
+const bigPromise = require('./bigPromise');
 const User = require('../models/user');
 const jwt = require('jsonwebtoken');
 

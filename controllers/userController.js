@@ -164,7 +164,7 @@ exports.changePassword = BigPromise(async (req, res, next) => {
   cookieToken(user, res);
 });
 
-exports.updateUserProfile = bigPromise(async (req, res, next) => {
+exports.updateUserProfile = BigPromise(async (req, res, next) => {
   try {
     const newData = {
       name: req.body.name,
@@ -181,7 +181,7 @@ exports.updateUserProfile = bigPromise(async (req, res, next) => {
       cloudinary.v2.uploader.destroy(
         photoId,
         {
-          resource_type: "image",
+          resource_type: 'image',
         },
         function (err, result) {
           if (err) {
@@ -194,9 +194,9 @@ exports.updateUserProfile = bigPromise(async (req, res, next) => {
       //upload the photo now...
 
       const result = await cloudinary.v2.uploader.upload(file.tempFilePath, {
-        folder: "users",
+        folder: 'users',
         width: 150,
-        crop: "scale",
+        crop: 'scale',
       });
 
       newData.photo = {
@@ -219,6 +219,5 @@ exports.updateUserProfile = bigPromise(async (req, res, next) => {
   }
 });
 
-
-// if you dont understand from where req.user.id is comming from check out in 
+// if you dont understand from where req.user.id is comming from check out in
 // '..middlewares/userController' where we created it.
