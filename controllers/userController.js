@@ -150,3 +150,75 @@ exports.getLoggedInUserDetails = BigPromise(async (req, res, next) => {
     user,
   });
 });
+
+exports.changePassword = BigPromise(async (req, res, next) => {
+  const userId = req.user.id;
+  const user = User.findById(userId).select('+password');
+  const isCorrectOldPassword = await user.isValidPassword(req.body.oldPassword);
+  if (!isCorrectOldPassword) {
+    return next(new Error('Old Password id incorrect', 400));
+  }
+
+  user.password = req.body.oldPassword;
+  await user.save();
+  cookieToken(user, res);
+});
+
+exports.updateUserProfile = bigPromise(async (req, res, next) => {
+  try {
+    const newData = {
+      name: req.body.name,
+    };
+
+    if (req.files) {
+      let file = req.files.photo;
+
+      const requiredUser = await User.findById(req.user._id);
+
+      const photoId = requiredUser.photo.id;
+
+      //destroyed the photo on cloudinary..
+      cloudinary.v2.uploader.destroy(
+        photoId,
+        {
+          resource_type: "image",
+        },
+        function (err, result) {
+          if (err) {
+            console.log(err);
+          }
+          console.log(result);
+        }
+      );
+
+      //upload the photo now...
+
+      const result = await cloudinary.v2.uploader.upload(file.tempFilePath, {
+        folder: "users",
+        width: 150,
+        crop: "scale",
+      });
+
+      newData.photo = {
+        id: result.public_id,
+        secure_url: result.secure_url,
+      };
+    }
+
+    await User.findByIdAndUpdate(req.user._id, newData, {
+      new: true,
+      runValidators: true,
+    });
+
+    res.status(200).json({
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+});
+
+
+// if you dont understand from where req.user.id is comming from check out in 
+// '..middlewares/userController' where we created it.
