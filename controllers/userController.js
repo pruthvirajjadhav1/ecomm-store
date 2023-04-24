@@ -1,30 +1,30 @@
-const BigPromise = require('../middlewares/bigPromise');
-const User = require('../models/user');
-const cookieToken = require('../utils/cookieToken');
-const fileUpload = require('express-fileupload');
-const cloudinary = require('cloudinary').v2;
-const emailHelper = require('../utils/emailHelper');
-const crypto = require('crypto');
+const BigPromise = require("../middlewares/bigPromise");
+const User = require("../models/user");
+const cookieToken = require("../utils/cookieToken");
+const fileUpload = require("express-fileupload");
+const cloudinary = require("cloudinary").v2;
+const emailHelper = require("../utils/emailHelper");
+const crypto = require("crypto");
 
 exports.signup = BigPromise(async (req, res, next) => {
   if (!req.files) {
-    return next(new Error('photo is required for signup'));
+    return next(new Error("photo is required for signup"));
   }
 
   // It will handel the following data
   const { name, email, password } = req.body;
 
   if (!email || !name || !password) {
-    return next(new Error('Name, Email, and password is required'));
+    return next(new Error("Name, Email, and password is required"));
   }
 
   // If the files are sent then it will handel that
   let result;
   let file = req.files.photo;
   result = await cloudinary.uploader.upload(file.tempFilePath, {
-    folder: 'users',
+    folder: "users",
     width: 150,
-    crop: 'scale',
+    crop: "scale",
   });
 
   const user = await User.create({
@@ -44,35 +44,35 @@ exports.login = BigPromise(async (req, res, next) => {
   const { email, password } = req.body;
   // check if the user is giving both
   if (!email || !password) {
-    return next(new Error('Please provide email and password'));
+    return next(new Error("Please provide email and password"));
   }
 
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email }).select("+password");
 
   // check if user is in DB
   if (!user) {
-    return next(new Error('This user is not in the DB kindely signup'));
+    return next(new Error("This user is not in the DB kindely signup"));
   }
 
   const isPasswordCorrect = await user.isValidatedPassword(password);
 
   // check if password is correct
   if (!isPasswordCorrect) {
-    return next(new Error('Password is incorrect'));
+    return next(new Error("Password is incorrect"));
   }
 
   cookieToken(user, res);
 });
 
 exports.logout = BigPromise(async (req, res, next) => {
-  res.cookie('token', null, {
+  res.cookie("token", null, {
     expires: new Date(Date.now()),
     https: true,
   });
 
   res.status(200).json({
     sucess: true,
-    message: 'logout success',
+    message: "logout success",
   });
 });
 
@@ -92,14 +92,14 @@ exports.forgotPassword = BigPromise(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   const myUrl = `${req.protocol}://${req.get(
-    'host'
+    "host"
   )}/password/reset/${forgotToken}`;
 
   const message = `Copy paste this link in your URL and hit enter \\ ${myUrl}`;
 
   const options = {
     email: user.email,
-    subject: 'This is the testing email - Password reset',
+    subject: "This is the testing email - Password reset",
     message,
   };
 
@@ -107,7 +107,7 @@ exports.forgotPassword = BigPromise(async (req, res, next) => {
     await emailHelper(options);
     res.status(200).json({
       sucess: true,
-      message: 'Email sent sucess',
+      message: "Email sent sucess",
     });
   } catch (err) {
     user.forgotPasswordToken = undefined;
@@ -120,7 +120,7 @@ exports.forgotPassword = BigPromise(async (req, res, next) => {
 exports.passwordReset = BigPromise(async (req, res, next) => {
   const { token } = req.params;
 
-  const encryToken = crypto.createHash('sha256').update(token).digest('hex');
+  const encryToken = crypto.createHash("sha256").update(token).digest("hex");
 
   const user = await User.find({
     encryToken,
@@ -128,11 +128,11 @@ exports.passwordReset = BigPromise(async (req, res, next) => {
   });
 
   if (!user) {
-    return next(new Error('Token is invalid or expired', 400));
+    return next(new Error("Token is invalid or expired", 400));
   }
 
   if (req.body.password != req.body.confPassword) {
-    return next(new Error('Confirm password does not match'));
+    return next(new Error("Confirm password does not match"));
   }
 
   user.password = req.body.password;
@@ -153,10 +153,10 @@ exports.getLoggedInUserDetails = BigPromise(async (req, res, next) => {
 
 exports.changePassword = BigPromise(async (req, res, next) => {
   const userId = req.user.id;
-  const user = User.findById(userId).select('+password');
+  const user = User.findById(userId).select("+password");
   const isCorrectOldPassword = await user.isValidPassword(req.body.oldPassword);
   if (!isCorrectOldPassword) {
-    return next(new Error('Old Password id incorrect', 400));
+    return next(new Error("Old Password id incorrect", 400));
   }
 
   user.password = req.body.oldPassword;
@@ -181,7 +181,7 @@ exports.updateUserProfile = BigPromise(async (req, res, next) => {
       cloudinary.v2.uploader.destroy(
         photoId,
         {
-          resource_type: 'image',
+          resource_type: "image",
         },
         function (err, result) {
           if (err) {
@@ -194,9 +194,9 @@ exports.updateUserProfile = BigPromise(async (req, res, next) => {
       //upload the photo now...
 
       const result = await cloudinary.v2.uploader.upload(file.tempFilePath, {
-        folder: 'users',
+        folder: "users",
         width: 150,
-        crop: 'scale',
+        crop: "scale",
       });
 
       newData.photo = {
@@ -217,6 +217,14 @@ exports.updateUserProfile = BigPromise(async (req, res, next) => {
     console.log(error);
     res.status(500).send(error);
   }
+});
+
+exports.adminAllUser = BigPromise(async (req, res, next) => {
+  const users = User.find();
+  res.status(200).json({
+    success: true,
+    users,
+  });
 });
 
 // if you dont understand from where req.user.id is comming from check out in
