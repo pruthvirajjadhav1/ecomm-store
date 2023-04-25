@@ -14,4 +14,13 @@ exports.isLoggedIn = bigPromise(async (req, res, next) => {
   next();
 });
 
+exports.customRole = (...roles)=>{
+  return(req,res,next)=>{
+    if(!roles.includes(req.user.role)){
+      return next(new Error('You are not allowed to this resource.',403));
+    }
+    next();
+  }
+}
+
 // In this middleware we can get the userdata
