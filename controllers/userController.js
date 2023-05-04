@@ -235,5 +235,35 @@ exports.managerAllUsers = BigPromise(async (req, res) => {
   });
 });
 
+exports.admingetOneUser = BigPromise(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    next(new Error("No user found", 400));
+  }
+
+  res.status(200).json({
+    sucess: true,
+    user,
+  });
+});
+
+exports.amdminUpdateOneUserDetails = BigPromise(async (req, res, next) => {
+  const newData = {
+    name: req.body.name,
+    email: req.body.email,
+    role: req.body.role,
+  };
+
+  await User.findByIdAndUpdate(req.params.id, newData, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    success: true,
+  });
+});
+
 // if you dont understand from where req.user.id is comming from check out in
 // '..middlewares/userController' where we created it.
