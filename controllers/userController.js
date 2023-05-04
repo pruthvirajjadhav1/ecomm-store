@@ -220,7 +220,15 @@ exports.updateUserProfile = BigPromise(async (req, res, next) => {
 });
 
 exports.adminAllUser = BigPromise(async (req, res, next) => {
-  const users = User.find();
+  const users = await User.find().exec();
+  res.status(200).json({
+    success: true,
+    users,
+  });
+});
+
+exports.managerAllUsers = BigPromise(async (req, res) => {
+  const users = await User.find({ role: "user" }).exec();
   res.status(200).json({
     success: true,
     users,
