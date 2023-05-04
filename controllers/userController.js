@@ -239,7 +239,7 @@ exports.admingetOneUser = BigPromise(async (req, res, next) => {
   const user = await User.findById(req.params.id);
 
   if (!user) {
-    next(new Error("No user found", 400));
+    return next(new Error("No user found", 400));
   }
 
   res.status(200).json({
@@ -262,6 +262,22 @@ exports.amdminUpdateOneUserDetails = BigPromise(async (req, res, next) => {
 
   res.status(200).json({
     success: true,
+  });
+});
+
+exports.adminDeleteOneUserDetails = BigPromise(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  if (!user) {
+    return next(new Error("User not found"), 401);
+  }
+
+  const imageId = user.photo.id;
+  await cloudinary.v2.uploader.destroy(imageId);
+  await user.remove();
+
+  res.status(200).json({
+    sucess: true,
   });
 });
 

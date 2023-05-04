@@ -13,6 +13,7 @@ const {
   managerAllUsers,
   admingetOneUser,
   amdminUpdateOneUserDetails,
+  adminDeleteOneUserDetails,
 } = require("../controllers/userController");
 
 const { isLoggedIn, customRole } = require("../middlewares/user");
@@ -31,7 +32,8 @@ router.route("/admin/users").get(isLoggedIn, customRole("admin"), adminAllUser);
 router
   .route("/admin/user/:id")
   .get(isLoggedIn, customRole("admin"), admingetOneUser)
-  .put(isLoggedIn, customRole("admin", amdminUpdateOneUserDetails));
+  .put(isLoggedIn, customRole("admin", amdminUpdateOneUserDetails))
+  .delete(isLoggedIn, customRole("admin", adminDeleteOneUserDetails));
 
 // Manager only route
 router
