@@ -36,7 +36,7 @@ const productSchema = new mongoose.Schema({
     ],
     // Here enum allows use too choose from the given options
     enum: {
-      values: ["long-sleeves", "hoodies", "short-sleeves", "sweat-shirts"],
+      values: ["longsleeves", "hoodies", "shortsleeves", "sweatshirts"],
       message:
         "Select from the following long-sleeves,short-sleeves,hoodies,sweat-shirts",
     },
