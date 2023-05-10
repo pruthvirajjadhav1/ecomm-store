@@ -8,10 +8,9 @@ class WhereClause {
     this.base = base;
     this.bigQ = bigQ;
   }
-
+  // Here we checking if the bigQ has "search" word
   search() {
-    // Here we checking if the bigQ has "search" word
-    const searchWord = this.bigQ.search
+    const searchword = this.bigQ.search
       ? {
           name: {
             $regex: this.bigQ.search,
@@ -20,7 +19,28 @@ class WhereClause {
         }
       : {};
 
-    this.base = this.base.find({ ...searchWord });
+    this.base = this.base.find({ ...searchword });
+    return this;
+  }
+
+  filter() {
+    const copyQ = { ...this.bigQ };
+
+    delete copyQ["search"];
+    delete copyQ["limit"];
+    delete copyQ["page"];
+
+    //convert bigQ into a string => copyQ
+    let stringOfCopyQ = JSON.stringify(copyQ);
+
+    stringOfCopyQ = stringOfCopyQ.replace(
+      /\b(gte|lte|gt|lt)\b/g,
+      (m) => `$${m}`
+    );
+
+    const jsonOfCopyQ = JSON.parse(stringOfCopyQ);
+
+    this.base = this.base.find(jsonOfCopyQ);
     return this;
   }
 
@@ -36,3 +56,5 @@ class WhereClause {
     return this;
   }
 }
+
+module.exports = WhereClause;
