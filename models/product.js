@@ -49,7 +49,7 @@ const productSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
-  numOfReviews: {
+  numberOfReviews: {
     type: Number,
     default: 0,
   },
@@ -95,7 +95,7 @@ module.exports = mongoose.model("Product", productSchema);
 // brand
 // stock
 // ratings
-// numOfRiviews
+// numberOfReviews
 // reviews[user, name, rating, comment]
 // user
 // createdAt
