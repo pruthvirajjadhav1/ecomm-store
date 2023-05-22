@@ -1,10 +1,11 @@
 openapi: 3.0.0
 info:
-  title: ecomm-app 
-  description: Testing the ecomm-app apis
+  title: Ecomm-App 
+  description: Testing the ecomm-app apis 👾	
   version: 1.0.0
   contact:
     email: pruthvirajjadhav1@gmail.com
+    
 
 # servers:
 #   - url: "http://localhost:8000/api/v1"
@@ -24,7 +25,8 @@ servers:
       url:
         enum:
           - localhost:4000
-        default: localhost:4000
+          - ecomm-store-y5o9.onrender.com
+        default: ecomm-store-y5o9.onrender.com
       protocol:
         enum:
           - http
