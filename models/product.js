@@ -41,6 +41,10 @@ const productSchema = new mongoose.Schema({
         "Select from the following long-sleeves,short-sleeves,hoodies,sweat-shirts",
     },
   },
+  order: {
+    type: Number,
+    required: [true, "Please enter the stock"],
+  },
   brand: {
     type: String,
     required: [true, "Please enter a brand"],
