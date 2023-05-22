@@ -4,6 +4,6 @@ const { home } = require("../controllers/homeController");
 const {dummyRoute} = require("../controllers/homeController");
 
 router.route("/").get(home);
-router.route("/dummey").get(dummyRoute);
+router.route("/dummy").get(dummyRoute);
 
 module.exports = router;
